@@ -27,7 +27,7 @@ public class ScraperService {
      * @param url
      * @return
      */
-    public List<String> getSainsburysProductLinks(URL url) throws IOException {
+    public List<String> getSainsburysProductLinks(final URL url) throws IOException {
 
         Response response = Jsoup.connect(url.toString())
                     .method(Connection.Method.GET)
@@ -46,7 +46,7 @@ public class ScraperService {
      * @param url
      * @return
      */
-    public SainsburysData getSainsburysProductData(URL url) throws IOException {
+    public SainsburysData getSainsburysProductData(final URL url) throws IOException {
 
         String title;
         Double unitPrice;
@@ -84,7 +84,7 @@ public class ScraperService {
                 description = el.text();
             }
 
-            return new SainsburysData(title,null, unitPrice, description);
+            return new SainsburysData(title, 30.0, unitPrice, description);
         }
         throw new HttpStatusException("Invalid response", response.statusCode(), url.toString());
     }

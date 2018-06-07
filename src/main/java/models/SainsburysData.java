@@ -2,16 +2,21 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
  * Model to hold product data scraped from Sainsbury's website
  */
+@JsonPropertyOrder({"title", "kCalPer100g", "unitPrice", "description"})
 public class SainsburysData {
 
     private String title;
     @JsonInclude(Include.NON_NULL)
+    @JsonProperty("kcal_per_100g")
     private Double kCalPer100g;
+    @JsonProperty("unit_price")
     private Double unitPrice;
     private String description;
 

@@ -23,8 +23,10 @@ public class Application {
 
     public static void main(String[] args) {
         ScraperService scraperService = new ScraperService();
-        List<SainsburysData> sainsburysData = new ArrayList<>();
         Total total = new Total();
+        Results results = new Results();
+
+        List<SainsburysData> sainsburysData = new ArrayList<>();
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -39,16 +41,12 @@ public class Application {
                 sainsburysData.add(sd);
             }
 
-            total.setGross(BigDecimal.valueOf(gross).setScale(2));
-            total.setVat(BigDecimal.valueOf(gross - (gross/1.2)).setScale(2, RoundingMode.HALF_UP));
+            populateTotal(total, gross);
 
-            Results results = new Results();
             results.setResults(sainsburysData);
             results.setTotal(total);
 
-            String arrayToJson = objectMapper.writeValueAsString(results);
-
-            System.out.println(arrayToJson);
+            System.out.println(objectMapper.writeValueAsString(results));
 
         } catch (IOException e) {
             if(e instanceof JsonProcessingException) {
@@ -59,5 +57,10 @@ public class Application {
                 //@TODO
             }
         }
+    }
+
+    private static void populateTotal(final Total total, final double gross) {
+        total.setGross(BigDecimal.valueOf(gross).setScale(2));
+        total.setVat(BigDecimal.valueOf(gross - (gross/1.2)).setScale(2, RoundingMode.HALF_UP));
     }
 }
