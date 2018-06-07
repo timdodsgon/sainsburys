@@ -1,16 +1,21 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+
 /**
  * Model to hold product data scraped from Sainsbury's website
  */
 public class SainsburysData {
 
     private String title;
-    private String kCalPer100g;
-    private String unitPrice;
+    @JsonInclude(Include.NON_NULL)
+    private Double kCalPer100g;
+    private Double unitPrice;
     private String description;
 
-    public SainsburysData(String title, String kCalPer100g, String unitPrice, String description) {
+    public SainsburysData(String title, Double kCalPer100g, Double unitPrice, String description) {
         this.title = title;
         this.kCalPer100g = kCalPer100g;
         this.unitPrice = unitPrice;
@@ -25,19 +30,19 @@ public class SainsburysData {
         this.title = title;
     }
 
-    public String getkCalPer100g() {
+    public Double getkCalPer100g() {
         return kCalPer100g;
     }
 
-    public void setkCalPer100g(String kCalPer100g) {
+    public void setkCalPer100g(Double kCalPer100g) {
         this.kCalPer100g = kCalPer100g;
     }
 
-    public String getUnitPrice() {
+    public Double getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(String unitPrice) {
+    public void setUnitPrice(Double unitPrice) {
         this.unitPrice = unitPrice;
     }
 
