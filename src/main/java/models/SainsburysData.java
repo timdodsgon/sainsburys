@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-
 /**
  * Model to hold product data scraped from Sainsbury's website
  */
@@ -30,7 +29,6 @@ public class SainsburysData {
     public String getTitle() {
         return title;
     }
-
     public void setTitle(String title) {
         this.title = title;
     }
@@ -38,7 +36,6 @@ public class SainsburysData {
     public Double getkCalPer100g() {
         return kCalPer100g;
     }
-
     public void setkCalPer100g(Double kCalPer100g) {
         this.kCalPer100g = kCalPer100g;
     }
@@ -46,7 +43,6 @@ public class SainsburysData {
     public Double getUnitPrice() {
         return unitPrice;
     }
-
     public void setUnitPrice(Double unitPrice) {
         this.unitPrice = unitPrice;
     }
@@ -54,7 +50,6 @@ public class SainsburysData {
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
