@@ -1,4 +1,4 @@
-package services;
+package services.impl;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
@@ -18,19 +18,20 @@ import org.junit.rules.ExpectedException;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-public class ScraperServiceTest {
+public class ScraperServiceImplTest {
 
     private static final String BASE_URL = "http://127.0.0.1:8089";
     private static final String PATH = "/products/products.html";
     private static final String MALFORMED_URL = "http://127.0.0.1:8089http/products/products.html";
 
-    private ScraperService scraperService;
+    private ScraperServiceImpl scraperService;
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(8089);
@@ -39,39 +40,23 @@ public class ScraperServiceTest {
     public final ExpectedException exception = ExpectedException.none();
 
     @Before
-    public void setupHTTPStubs() throws IOException {
+    public void setup() throws IOException {
 
-        scraperService = new ScraperService();
+        scraperService = new ScraperServiceImpl();
 
         /* Mock products list */
         String productsHtml = IOUtils.toString(this.getClass().getResourceAsStream("/products.html"), "UTF-8");
-        stubFor(get(urlEqualTo("/products/products.html"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "text/html")
-                        .withBody(productsHtml)));
+        givenWebSiteResponse(productsHtml, "/products/products.html", HttpsURLConnection.HTTP_OK);
 
         /* Mock individual product pages */
         String berrysHtml = IOUtils.toString(this.getClass().getResourceAsStream("/berrys.html"), "UTF-8");
-        stubFor(get(urlEqualTo("/products/berrys.html"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "text/html")
-                        .withBody(berrysHtml)));
+        givenWebSiteResponse(berrysHtml, "/products/berrys.html", 200);
 
         String blueberriesHtml = IOUtils.toString(this.getClass().getResourceAsStream("/blueberries.html"), "UTF-8");
-        stubFor(get(urlEqualTo("/products/blueberries.html"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "text/html")
-                        .withBody(blueberriesHtml)));
+        givenWebSiteResponse(blueberriesHtml, "/products/blueberries.html", 200);
 
         String strawberriesHtml = IOUtils.toString(this.getClass().getResourceAsStream("/strawberries.html"), "UTF-8");
-        stubFor(get(urlEqualTo("/products/strawberries.html"))
-                .willReturn(aResponse()
-                        .withStatus(200)
-                        .withHeader("Content-Type", "text/html")
-                        .withBody(strawberriesHtml)));
+        givenWebSiteResponse(strawberriesHtml, "/products/strawberries.html", 200);
     }
 
     @Test
@@ -88,11 +73,7 @@ public class ScraperServiceTest {
     public void testInvalidHTTPStatusThrowsHttpStatusException() throws IOException {
         // given
         String productsHtml = IOUtils.toString(this.getClass().getResourceAsStream("/products.html"), "UTF-8");
-        stubFor(get(urlEqualTo("/products/products.html"))
-                .willReturn(aResponse()
-                        .withStatus(500)
-                        .withHeader("Content-Type", "text/html")
-                        .withBody(productsHtml)));
+        givenWebSiteResponse(productsHtml, "/products/products.html",HttpsURLConnection.HTTP_INTERNAL_ERROR);
         // expected
         exception.expect(HttpStatusException.class);
         // when
@@ -133,8 +114,16 @@ public class ScraperServiceTest {
         double gross = 40;
         double expectedVAT = 6.67;
         // when
-        scraperService.populateTotal(total, gross);
+        scraperService.populateTotal(gross);
         // then
         assertEquals(BigDecimal.valueOf(expectedVAT), total.getVat());
+    }
+
+    private void givenWebSiteResponse(String productsHtml, String url, int httpStatus) {
+        stubFor(get(urlEqualTo(url))
+                .willReturn(aResponse()
+                .withStatus(httpStatus)
+                .withHeader("Content-Type", "text/html")
+                .withBody(productsHtml)));
     }
 }
