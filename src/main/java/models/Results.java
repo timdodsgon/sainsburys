@@ -4,14 +4,14 @@ import java.util.List;
 
 public class Results {
 
-    private List<SainsburysData> results;
+    private List<Product> results;
     private Total total;
 
-    public List<SainsburysData> getResults() {
+    public List<Product> getResults() {
         return results;
     }
 
-    public void setResults(List<SainsburysData> results) {
+    public void setResults(List<Product> results) {
         this.results = results;
     }
 

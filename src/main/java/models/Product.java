@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * Model to hold product data scraped from Sainsbury's website
  */
 @JsonPropertyOrder({"title", "kCalPer100g", "unitPrice", "description"})
-public class SainsburysData {
+public class Product {
 
     private String title;
     @JsonInclude(Include.NON_NULL)
@@ -19,7 +19,7 @@ public class SainsburysData {
     private Double unitPrice;
     private String description;
 
-    public SainsburysData(String title, Double kCalPer100g, Double unitPrice, String description) {
+    public Product(String title, Double kCalPer100g, Double unitPrice, String description) {
         this.title = title;
         this.kCalPer100g = kCalPer100g;
         this.unitPrice = unitPrice;
@@ -29,28 +29,16 @@ public class SainsburysData {
     public String getTitle() {
         return title;
     }
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public Double getkCalPer100g() {
         return kCalPer100g;
-    }
-    public void setkCalPer100g(Double kCalPer100g) {
-        this.kCalPer100g = kCalPer100g;
     }
 
     public Double getUnitPrice() {
         return unitPrice;
     }
-    public void setUnitPrice(Double unitPrice) {
-        this.unitPrice = unitPrice;
-    }
 
     public String getDescription() {
         return description;
-    }
-    public void setDescription(String description) {
-        this.description = description;
     }
 }
