@@ -4,7 +4,7 @@ import org.jsoup.HttpStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import services.ScraperService;
-import services.impl.ScraperServiceImpl;
+import services.factories.ScraperServiceFactory;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -17,10 +17,13 @@ public class Application {
     private static final String PATH = "webapp/wcs/stores/servlet/gb/groceries/berries-cherries-currants6039.html";
 
     public static void main(String[] args) {
-        ScraperService scraperService = new ScraperServiceImpl();
+
+        ScraperServiceFactory scraperServiceFactory = new ScraperServiceFactory();
+        ScraperService scraperService = scraperServiceFactory.getScraperService("SAINSBURYS");
 
         try {
-            System.out.println(scraperService.scrape(BASE_URL, PATH));
+            if(null != scraperService)
+                System.out.println(scraperService.scrape(BASE_URL, PATH));
         } catch (IOException e) {
             if(e instanceof JsonProcessingException)
                 LOGGER.error("There has been an error processing your JSON objects", e);

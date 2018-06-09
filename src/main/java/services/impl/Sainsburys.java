@@ -27,9 +27,9 @@ import java.util.List;
 /**
  * Created by Tim on 6/6/2018.
  */
-public class ScraperServiceImpl implements ScraperService {
+public class Sainsburys implements ScraperService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScraperServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Sainsburys.class);
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0";
     private static final String RELATIVE_LINK = "../";
@@ -59,7 +59,11 @@ public class ScraperServiceImpl implements ScraperService {
         results.setResults(products);
         results.setTotal(calculateVATFromRunningTotal(runningTotal));
 
-        return objectMapper.writeValueAsString(results);
+        String jsonString = objectMapper.writeValueAsString(results);
+        if(isJSONValid(jsonString)){
+            return jsonString;
+        }
+        return StringUtils.EMPTY;
     }
 
     /**
@@ -68,7 +72,7 @@ public class ScraperServiceImpl implements ScraperService {
      * @param runningTotal
      * @return
      */
-    protected Total calculateVATFromRunningTotal(final double runningTotal) {
+    Total calculateVATFromRunningTotal(final double runningTotal) {
         Total total = new Total();
 
         total.setGross(BigDecimal.valueOf(runningTotal).setScale(2, RoundingMode.HALF_UP));
@@ -82,7 +86,7 @@ public class ScraperServiceImpl implements ScraperService {
      * @param url
      * @return
      */
-    protected List<String> getSainsburysProductLinks(final URL url) throws IOException {
+    List<String> getSainsburysProductLinks(final URL url) throws IOException {
 
         Response response = Jsoup.connect(url.toString())
                     .method(Connection.Method.GET)
@@ -101,7 +105,7 @@ public class ScraperServiceImpl implements ScraperService {
      * @param url
      * @return
      */
-    protected Product getSainsburysProduct(final URL url) throws IOException {
+    Product getSainsburysProduct(final URL url) throws IOException {
 
         String title;
         Double unitPrice;
@@ -115,10 +119,11 @@ public class ScraperServiceImpl implements ScraperService {
 
         if(HttpsURLConnection.HTTP_OK == response.statusCode()) {
             Document doc = response.parse();
-            Element element = doc.select("div.productTitleDescriptionContainer").first();
+            Element element;
 
             /* Product title */
-            if(element == null) { return null; }
+            element = doc.select("div.productTitleDescriptionContainer").first();
+            if(element == null || element.getElementsByTag("h1").first() == null) { return null; }
             title = element.getElementsByTag("h1").first().text();
 
             /* Calories per 100 grams */
@@ -133,7 +138,7 @@ public class ScraperServiceImpl implements ScraperService {
             element = doc.select("p.pricePerUnit").first();
             if (element == null) { return null; }
             unitPrice = Double.parseDouble(element.text().substring(1).replace("/unit", StringUtils.EMPTY));
-            
+
             /* Product description */
             element = doc.select("div.productText p").first();
             if (element == null) { return null;}
@@ -145,11 +150,27 @@ public class ScraperServiceImpl implements ScraperService {
     }
 
     /**
+     * Test given JSON is valid
+     *
+     * @param json
+     * @return boolean
+     */
+    boolean isJSONValid(String json) {
+        try {
+            final ObjectMapper mapper = new ObjectMapper();
+            mapper.readTree(json);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    /**
      * Method to aid in running the test harness
      *
      * @param objectMapper
      */
-    protected void setObjectMapper(ObjectMapper objectMapper) {
+    void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 }

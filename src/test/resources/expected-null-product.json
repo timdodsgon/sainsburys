@@ -1,0 +1,17 @@
+{
+  "results" : [ {
+    "title" : "Sainsbury's Blueberries 200g",
+    "kcal_per_100g" : 45.0,
+    "unit_price" : 1.75,
+    "description" : "by Sainsbury's blueberries"
+  }, {
+    "title" : "Sainsbury's Strawberries 400g",
+    "kcal_per_100g" : 33.0,
+    "unit_price" : 1.75,
+    "description" : "by Sainsbury's strawberries"
+  } ],
+  "total" : {
+    "gross" : 3.50,
+    "vat" : 0.58
+  }
+}
