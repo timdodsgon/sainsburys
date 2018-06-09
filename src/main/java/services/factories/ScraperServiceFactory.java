@@ -3,7 +3,7 @@ package services.factories;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import services.ScraperService;
-import services.impl.Sainsburys;
+import services.scrapers.Sainsburys;
 
 /**
  * Factory to return appropriate Scraper for a given site

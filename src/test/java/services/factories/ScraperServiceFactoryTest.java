@@ -11,7 +11,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.LoggerFactory;
 import services.BaseScaperServiceTest;
 import services.ScraperService;
-import services.impl.Sainsburys;
+import services.scrapers.Sainsburys;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.nullValue;

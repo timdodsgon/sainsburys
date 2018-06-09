@@ -1,4 +1,4 @@
-package services.impl;
+package services.scrapers;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;

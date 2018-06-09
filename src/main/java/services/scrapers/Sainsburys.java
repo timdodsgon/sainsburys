@@ -1,4 +1,4 @@
-package services.impl;
+package services.scrapers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
