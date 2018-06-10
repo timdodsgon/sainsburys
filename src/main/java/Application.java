@@ -1,5 +1,6 @@
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import config.Config;
 import org.jsoup.HttpStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,9 +14,6 @@ public class Application {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
-    private static final String BASE_URL = "https://jsainsburyplc.github.io/serverside-test/site/www.sainsburys.co.uk/";
-    private static final String PATH = "webapp/wcs/stores/servlet/gb/groceries/berries-cherries-currants6039.html";
-
     public static void main(String[] args) {
 
         ScraperServiceFactory scraperServiceFactory = new ScraperServiceFactory();
@@ -23,7 +21,7 @@ public class Application {
 
         try {
             if(null != scraperService)
-                System.out.println(scraperService.scrape(BASE_URL, PATH));
+                System.out.println(scraperService.scrape(Config.URL, Config.BASE_URL));
         } catch (IOException e) {
             if(e instanceof JsonProcessingException)
                 LOGGER.error("There has been an error processing your JSON objects", e);

@@ -13,11 +13,9 @@ public class ScraperServiceFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScraperServiceFactory.class);
 
     public ScraperService getScraperService(String scraper){
-        if(null != scraper) {
-            if (scraper.equals("SAINSBURYS")) {
-                LOGGER.info("Returning Sainsburys scraper");
-                return new Sainsburys();
-            }
+        if("SAINSBURYS".equals(scraper)) {
+            LOGGER.info("Returning Sainsburys scraper");
+            return new Sainsburys();
         }
         LOGGER.error("Sorry no scrapers available for {}", scraper);
         return null;

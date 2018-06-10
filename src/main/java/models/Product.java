@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 /**
- * Model to hold product data scraped from Sainsbury's website
+ * Model to hold product data
  */
 @JsonPropertyOrder({"title", "kCalPer100g", "unitPrice", "description"})
 public class Product {
@@ -29,15 +29,12 @@ public class Product {
     public String getTitle() {
         return title;
     }
-
     public Double getkCalPer100g() {
         return kCalPer100g;
     }
-
     public Double getUnitPrice() {
         return unitPrice;
     }
-
     public String getDescription() {
         return description;
     }

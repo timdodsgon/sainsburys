@@ -2,6 +2,7 @@ package services.scrapers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import config.Config;
 import models.Results;
 import models.Product;
 import models.Total;
@@ -33,12 +34,12 @@ public class Sainsburys implements ScraperService {
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0";
     private static final String RELATIVE_LINK = "../";
+    private static final String INVALID_JSON = "INVALID";
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public String scrape(final String baseURL, final String path) throws IOException {
+    public String scrape(final String url, final String baseURL) throws IOException {
 
-        Results results = new Results();
         List<Product> products = new ArrayList<>();
 
         objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -46,7 +47,7 @@ public class Sainsburys implements ScraperService {
         LOGGER.info("Starting scrape");
 
         double runningTotal = 0;
-        for(String link : getSainsburysProductLinks(new URL(baseURL + path))) {
+        for(String link : getSainsburysProductLinks(new URL(url))) {
             Product product = getSainsburysProduct(new URL(baseURL + link.replace(RELATIVE_LINK, StringUtils.EMPTY)));
             if(null != product) {
                 runningTotal += product.getUnitPrice();
@@ -56,28 +57,24 @@ public class Sainsburys implements ScraperService {
             }
         }
 
-        results.setResults(products);
-        results.setTotal(calculateVATFromRunningTotal(runningTotal));
+        Results results = new Results(products, calculateVATFromRunningTotal(runningTotal));
 
         String jsonString = objectMapper.writeValueAsString(results);
         if(isJSONValid(jsonString)){
             return jsonString;
         }
-        return StringUtils.EMPTY;
+        return INVALID_JSON;
     }
 
     /**
      * Instantiates Total object and calculates the VAT in runningTotal
      *
-     * @param runningTotal
+     * @param productsTotal
      * @return
      */
-    Total calculateVATFromRunningTotal(final double runningTotal) {
-        Total total = new Total();
-
-        total.setGross(BigDecimal.valueOf(runningTotal).setScale(2, RoundingMode.HALF_UP));
-        total.setVat(BigDecimal.valueOf(runningTotal - (runningTotal/1.2)).setScale(2, RoundingMode.HALF_UP));
-        return total;
+    Total calculateVATFromRunningTotal(final double productsTotal) {
+        return new Total(BigDecimal.valueOf(productsTotal).setScale(2, RoundingMode.HALF_UP),
+                         BigDecimal.valueOf(productsTotal - (productsTotal/1.2)).setScale(2, RoundingMode.HALF_UP));
     }
 
     /**
@@ -122,12 +119,12 @@ public class Sainsburys implements ScraperService {
             Element element;
 
             /* Product title */
-            element = doc.select("div.productTitleDescriptionContainer").first();
-            if(element == null || element.getElementsByTag("h1").first() == null) { return null; }
-            title = element.getElementsByTag("h1").first().text();
+            element = doc.select(Config.TITLE_CSS_SELECTOR).first();
+            if(element == null) { return null; }
+            title = element.text();
 
             /* Calories per 100 grams */
-            element = doc.select("td.nutritionLevel1, td:eq(0)[class], tr:eq(1) td:eq(1)").first();
+            element = doc.select(Config.CALORIES_CSS_SELECTOR).first();
             if(element == null) {
                 calories = null;
             } else {
@@ -135,12 +132,12 @@ public class Sainsburys implements ScraperService {
             }
 
             /* Product price per unit */
-            element = doc.select("p.pricePerUnit").first();
+            element = doc.select(Config.UNIT_PRICE_CSS_SELECTOR).first();
             if (element == null) { return null; }
             unitPrice = Double.parseDouble(element.text().substring(1).replace("/unit", StringUtils.EMPTY));
 
             /* Product description */
-            element = doc.select("div.productText p").first();
+            element = doc.select(Config.DESCRIPTION_CSS_SELECTOR).first();
             if (element == null) { return null;}
             description = element.text();
 

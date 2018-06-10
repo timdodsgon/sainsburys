@@ -44,8 +44,9 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class SainsburysTest  extends BaseScaperServiceTest {
 
+
+    private static final String URL = "http://127.0.0.1:8089/products/products.html";
     private static final String BASE_URL = "http://127.0.0.1:8089";
-    private static final String PATH = "/products/products.html";
     private static final String MALFORMED_URL = "http://127.0.0.1:8089http/products/products.html";
 
     private Sainsburys sainsburys;
@@ -84,7 +85,7 @@ public class SainsburysTest  extends BaseScaperServiceTest {
         // given
         String expected = IOUtils.toString(this.getClass().getResourceAsStream("/expected.json"), "UTF-8");
         // when
-        String actual = sainsburys.scrape(BASE_URL, PATH);
+        String actual = sainsburys.scrape(URL, BASE_URL);
         // then
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
         assertThatLoggerMessageIs(appender,1,"Starting scrape");
@@ -96,7 +97,7 @@ public class SainsburysTest  extends BaseScaperServiceTest {
         String expected = IOUtils.toString(this.getClass().getResourceAsStream("/expected-null-product.json"), "UTF-8");
         mockHTMLResponse("/nullproduct.html", "/products/berrys.html",HttpsURLConnection.HTTP_OK);
         // when
-        String actual = sainsburys.scrape(BASE_URL, PATH);
+        String actual = sainsburys.scrape(URL, BASE_URL);
         // then
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
         assertThatLoggerMessageIs(appender,1,"Starting scrape");
@@ -111,7 +112,7 @@ public class SainsburysTest  extends BaseScaperServiceTest {
         exception.expect(HttpStatusException.class);
         exception.expectMessage("Invalid response");
         // when
-        sainsburys.getSainsburysProductLinks(new URL(BASE_URL + PATH));
+        sainsburys.getSainsburysProductLinks(new URL(URL));
     }
 
     @Test
@@ -131,7 +132,7 @@ public class SainsburysTest  extends BaseScaperServiceTest {
         exception.expect(MalformedURLException.class);
         exception.expectMessage("8089http");
         // when
-        sainsburys.scrape(MALFORMED_URL, PATH);
+        sainsburys.scrape(MALFORMED_URL, BASE_URL);
     }
 
     @Test
@@ -144,13 +145,13 @@ public class SainsburysTest  extends BaseScaperServiceTest {
         exception.expect(JsonProcessingException.class);
         exception.expectMessage("Error");
         // when
-        sainsburys.scrape(BASE_URL, PATH);
+        sainsburys.scrape(URL, BASE_URL);
     }
 
     @Test
     public void testGetSainsburysProductLinksReturnsCorrectNumberOfLinks() throws IOException {
         // when
-        List<String> links = sainsburys.getSainsburysProductLinks(new URL(BASE_URL + PATH));
+        List<String> links = sainsburys.getSainsburysProductLinks(new URL(URL));
         // then
         assertThat(3, is(links.size()));
     }
