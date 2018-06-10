@@ -25,9 +25,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Tim on 6/6/2018.
- */
 public class Sainsburys implements ScraperService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Sainsburys.class);
@@ -38,7 +35,14 @@ public class Sainsburys implements ScraperService {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    public String scrape(final String url, final String baseURL) throws IOException {
+    /**
+     * Gather information from a http response and return a JSON String
+     *
+     * @param config
+     * @return JSON String
+     * @throws IOException
+     */
+    public String scrape(Config config) throws IOException {
 
         List<Product> products = new ArrayList<>();
 
@@ -47,8 +51,8 @@ public class Sainsburys implements ScraperService {
         LOGGER.info("Starting scrape");
 
         double runningTotal = 0;
-        for(String link : getSainsburysProductLinks(new URL(url))) {
-            Product product = getSainsburysProduct(new URL(baseURL + link.replace(RELATIVE_LINK, StringUtils.EMPTY)));
+        for(String link : getSainsburysProductLinks(new URL(config.getUrl()))) {
+            Product product = getSainsburysProduct(new URL(config.getBaseURL() + link.replace(RELATIVE_LINK, StringUtils.EMPTY)), config);
             if(null != product) {
                 runningTotal += product.getUnitPrice();
                 products.add(product);
@@ -102,7 +106,7 @@ public class Sainsburys implements ScraperService {
      * @param url
      * @return
      */
-    Product getSainsburysProduct(final URL url) throws IOException {
+    Product getSainsburysProduct(final URL url, final Config config) throws IOException {
 
         String title;
         Double unitPrice;
@@ -119,12 +123,12 @@ public class Sainsburys implements ScraperService {
             Element element;
 
             /* Product title */
-            element = doc.select(Config.TITLE_CSS_SELECTOR).first();
+            element = doc.select(config.getTitleCSSSelector()).first();
             if(element == null) { return null; }
             title = element.text();
 
             /* Calories per 100 grams */
-            element = doc.select(Config.CALORIES_CSS_SELECTOR).first();
+            element = doc.select(config.getCaloriesCSSSelector()).first();
             if(element == null) {
                 calories = null;
             } else {
@@ -132,12 +136,12 @@ public class Sainsburys implements ScraperService {
             }
 
             /* Product price per unit */
-            element = doc.select(Config.UNIT_PRICE_CSS_SELECTOR).first();
+            element = doc.select(config.getPriceCSSSelector()).first();
             if (element == null) { return null; }
             unitPrice = Double.parseDouble(element.text().substring(1).replace("/unit", StringUtils.EMPTY));
 
             /* Product description */
-            element = doc.select(Config.DESCRIPTION_CSS_SELECTOR).first();
+            element = doc.select(config.getDescriptionCSSSelector()).first();
             if (element == null) { return null;}
             description = element.text();
 

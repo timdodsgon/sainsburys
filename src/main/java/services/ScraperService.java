@@ -1,16 +1,17 @@
 package services;
 
+import config.Config;
+
 import java.io.IOException;
 
 public interface ScraperService {
 
     /**
-     * Gather information from a web resource and return a JSON String
+     * Gather information from a http response and return a JSON String
      *
-     * @param url
-     * @param baseURL
+     * @param config
      * @return JSON String
      * @throws IOException
      */
-    String scrape(final String url, final String baseURL) throws IOException;
+    String scrape(final Config config) throws IOException;
 }
