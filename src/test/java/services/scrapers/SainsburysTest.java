@@ -46,7 +46,6 @@ import java.util.Properties;
 @RunWith(MockitoJUnitRunner.class)
 public class SainsburysTest  extends BaseScaperServiceTest {
 
-
     private static final String URL = "http://127.0.0.1:8089/products/products.html";
     private static final String BASE_URL = "http://127.0.0.1:8089";
     private static final String MALFORMED_URL = "http://127.0.0.1:8089http/products/products.html";
@@ -178,12 +177,12 @@ public class SainsburysTest  extends BaseScaperServiceTest {
         // then
         assertThat("Sainsbury's Mixed Berry Twin Pack 200g", is(product.getTitle()));
         assertThat(product.getkCalPer100g(), is(nullValue()));
-        assertThat(2.75, is(product.getUnitPrice()));
+        assertThat(BigDecimal.valueOf(2.75), is(product.getUnitPrice()));
         assertThat("Mixed Berries", is(product.getDescription()));
     }
 
     @Test
-    public void testCalculateVATFromRunningTotalGeneratesCorrectVATAmount() throws IOException {
+    public void testCalculateVATFromRunningTotalGeneratesCorrectVATAmount() {
         // given
         double runningTotal = 40;
         double expectedVAT = 6.67;

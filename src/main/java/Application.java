@@ -33,7 +33,7 @@ public class Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(Application.class);
 
     /**
-     * Runs the application and handles errors
+     * Runs the application and handle errors
      * @param args
      */
     public static void main(String[] args) {

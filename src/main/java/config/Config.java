@@ -14,7 +14,7 @@ public final class Config {
     private String titleCSSSelector = "div.productTitleDescriptionContainer h1";
     private String caloriesCSSSelector= "td.nutritionLevel1, td:eq(0)[class], tr:eq(1) td:eq(1)";
     private String priceCSSSelector = "p.pricePerUnit";
-    private String descriptionCSSSelector = "div.productText p";
+    private String descriptionCSSSelector = "div.productText p, div.itemTypeGroup";
 
     public Config() {}
 

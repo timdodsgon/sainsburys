@@ -31,7 +31,7 @@ public class Sainsburys implements ScraperService {
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0";
     private static final String RELATIVE_LINK = "../";
-    private static final String INVALID_JSON = "INVALID";
+    private static final String INVALID_JSON = "{ \"results\" : \"INVALID\" }";
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -54,7 +54,7 @@ public class Sainsburys implements ScraperService {
         for(String link : getSainsburysProductLinks(new URL(config.getUrl()))) {
             Product product = getSainsburysProduct(new URL(config.getBaseURL() + link.replace(RELATIVE_LINK, StringUtils.EMPTY)), config);
             if(null != product) {
-                runningTotal += product.getUnitPrice();
+                runningTotal += product.getUnitPrice().doubleValue();
                 products.add(product);
             } else {
                 LOGGER.error("The following link {} returned no product data", link);
@@ -109,7 +109,7 @@ public class Sainsburys implements ScraperService {
     Product getSainsburysProduct(final URL url, final Config config) throws IOException {
 
         String title;
-        Double unitPrice;
+        BigDecimal unitPrice;
         Double calories;
         String description;
 
@@ -138,12 +138,15 @@ public class Sainsburys implements ScraperService {
             /* Product price per unit */
             element = doc.select(config.getPriceCSSSelector()).first();
             if (element == null) { return null; }
-            unitPrice = Double.parseDouble(element.text().substring(1).replace("/unit", StringUtils.EMPTY));
+            unitPrice = BigDecimal.valueOf(Double.parseDouble(element.text().substring(1).replace("/unit",
+                                           StringUtils.EMPTY))).setScale(2, RoundingMode.HALF_UP);
 
             /* Product description */
             element = doc.select(config.getDescriptionCSSSelector()).first();
             if (element == null) { return null;}
             description = element.text();
+
+
 
             return new Product(title, calories, unitPrice, description);
         }
