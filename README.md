@@ -24,6 +24,9 @@ Once you have cloned the project run the following at a CMD prompt in the projec
 
 ## Dependencies
 
+Insure the envirmental variable PATH contains the location of mvn.exe. 
+If you dont have a JAVA_HOME enviromental set, please add a new JAVA_HOME enviromental variable set to the location of your java jdk
+
 The application depends on just a few popular libraries/frameworks which are all supplied by maven.
 
 - jackson - for JSON data manipulation.
