@@ -4,7 +4,7 @@
 
 The code is designed to follow best practices, portability and be easily extensible.
 
-The whole concept of scraping html for vales is fragile at best so one of my early consideration was to de couple the css selectors from the actual service that is going to use them, to achieve this the application has a centralised configuration which can be overridable by an external properties file 
+The whole concept of scraping html for vales is fragile at best so one of my early consideration was to de couple the css selectors from the actual service that is going to use them, to achieve this the application has a centralised configuration which is overridable by an external properties file 
 
 When considering extensibility i had in mind being able to scrape a completely different domain, to achieve this the calling code to scrape a site calls an interface that is returned a scraper from a ScraperServiceFactory this means adding another scraper tailored to different site is as easy as adding a class and adding the new site to the factory
 
@@ -22,7 +22,7 @@ Once you have cloned the project run the following at a CMD prompt in the projec
 
 ## Dependencies
 
-The application depends on just few popular libraries/frameworks which all supplied by maven dependencies
+The application depends on just few popular libraries/frameworks which are all supplied by maven
 
 - jackson - for JSON data manipulation.
 - jsoup - for HTML parsing and DOM manipulation as well as web connections.
