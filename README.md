@@ -14,6 +14,18 @@ Logging is used to feedback information to the user, as well as error messages.
 
 [![Build Status](https://travis-ci.org/timdodsgon/sainsburys.svg?branch=master)](https://travis-ci.org/timdodsgon/sainsburys)
 
+## Dependencies
+
+Insure the envirmental variable PATH contains the location of mvn.exe. 
+
+If you dont have a JAVA_HOME enviromental set, please add a new JAVA_HOME enviromental variable set to the location of your java jdk.
+
+The application depends on just a few popular libraries/frameworks which are all supplied by maven.
+
+- jackson - for JSON data manipulation.
+- jsoup - for HTML parsing and DOM manipulation as well as web connections.
+- junit, mockito, wiremock and hamcrest - for testing.
+
 ## Installation
 
     git clone https://github.com/timdodsgon/sainsburys/
@@ -22,16 +34,6 @@ Once you have cloned the project run the following at a CMD prompt in the projec
 
     mvn package
 
-## Dependencies
-
-Insure the envirmental variable PATH contains the location of mvn.exe. 
-If you dont have a JAVA_HOME enviromental set, please add a new JAVA_HOME enviromental variable set to the location of your java jdk
-
-The application depends on just a few popular libraries/frameworks which are all supplied by maven.
-
-- jackson - for JSON data manipulation.
-- jsoup - for HTML parsing and DOM manipulation as well as web connections.
-- junit, mockito, wiremock and hamcrest - for testing.
 
 ## Usage
 
