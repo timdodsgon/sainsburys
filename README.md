@@ -10,7 +10,9 @@ When considering extensibility i had in mind being able to scrape a completely d
 
 Logging is used to feedback information to the user, as well as error messages
 
+## Build Status
 
+[![Build Status](https://travis-ci.org/timdodsgon/sainsburys.svg?branch=master)](https://travis-ci.org/timdodsgon/sainsburys)
 
 ## Installation
 
