@@ -16,9 +16,9 @@ Logging is used to feedback information to the user, as well as error messages.
 
 ## Dependencies
 
-Insure the envirmental variable PATH contains the location of mvn.exe. 
+Insure the environmental variable PATH contains the location of mvn.exe. 
 
-If you dont have a JAVA_HOME enviromental set, please add a new JAVA_HOME enviromental variable set to the location of your java jdk.
+If you don't have a JAVA_HOME environmental set, please add a new JAVA_HOME environmental variable set to the location of your java jdk.
 
 The application depends on just a few popular libraries/frameworks which are all supplied by maven.
 

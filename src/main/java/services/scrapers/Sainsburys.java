@@ -147,8 +147,6 @@ public class Sainsburys implements ScraperService {
             if (element == null) { return null;}
             description = element.text();
 
-
-
             return new Product(title, calories, unitPrice, description);
         }
         throw new HttpStatusException("Invalid response", response.statusCode(), url.toString());
