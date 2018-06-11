@@ -4,7 +4,7 @@
 
 The code is designed to follow best practices, portability and be easily extensible.
 
-The whole concept of scraping html for values is fragile at best so one of my early considerations was to de-couple the css selectors from the actual service that is going to use them. To achieve this the application has a centralised configuration which is overridable by an external properties file. 
+The whole concept of scraping html for values is fragile at best so one of my early considerations was to de-couple the css selectors from the actual service that is going to use them. To achieve this the application has a centralised configuration which can be overridable by an external properties file. 
 
 When considering extensibility I had in mind being able to scrape a completely different domain. To achieve this the calling code to scrape a site calls an interface that returns a scraper from a ScraperServiceFactory. This means adding another scraper tailored to a different site is as easy as adding a class and adding the new site to the factory.
 
