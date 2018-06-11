@@ -32,6 +32,7 @@ public class Sainsburys implements ScraperService {
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0";
     private static final String RELATIVE_LINK = "../";
     private static final String INVALID_JSON = "{ \"results\" : \"INVALID\" }";
+    private static final String DECIMAL_REGEX = "[^0-9.]";
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -138,7 +139,7 @@ public class Sainsburys implements ScraperService {
             /* Product price per unit */
             element = doc.select(config.getPriceCSSSelector()).first();
             if (element == null) { return null; }
-            unitPrice = BigDecimal.valueOf(Double.parseDouble(element.text().substring(1).replace("/unit",
+            unitPrice = BigDecimal.valueOf(Double.parseDouble(element.text().replaceAll(DECIMAL_REGEX,
                                            StringUtils.EMPTY))).setScale(2, RoundingMode.HALF_UP);
 
             /* Product description */
