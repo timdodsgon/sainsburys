@@ -18,7 +18,7 @@ Logging is used to feedback information to the user, as well as error messages.
 
 Insure the environmental variable PATH contains the location of mvn.exe. 
 
-If you don't have a JAVA_HOME environmental set, please add a new JAVA_HOME environmental variable set to the location of your java jdk.
+If you don't have a JAVA_HOME environmental variable set, please add a new JAVA_HOME environmental variable set to the location of your java jdk.
 
 The application depends on just a few popular libraries/frameworks which are all supplied by maven.
 
@@ -27,6 +27,8 @@ The application depends on just a few popular libraries/frameworks which are all
 - junit, mockito, wiremock and hamcrest - for testing.
 
 ## Installation
+
+Clone the repository to the directory of your choosing from git with the following command.
 
     git clone https://github.com/timdodsgon/sainsburys/
     
