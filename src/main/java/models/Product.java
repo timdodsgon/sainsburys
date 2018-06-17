@@ -60,10 +60,10 @@ public class Product {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         Product other = (Product) obj;
-        if (title != other.title) return false;
-        if (kCalPer100g != other.kCalPer100g) return false;
-        if (unitPrice != other.unitPrice) return false;
-        if (description != other.description) return false;
+        if (!Objects.equals(title, other.title)) return false;
+        if (!Objects.equals(kCalPer100g, other.kCalPer100g)) return false;
+        if (!Objects.equals(unitPrice, other.unitPrice)) return false;
+        if (!Objects.equals(description, other.description)) return false;
         return true;
     }
 }

@@ -1,15 +1,21 @@
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import config.Config;
+import models.Product;
+import models.Results;
+import models.Total;
 import org.jsoup.HttpStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import services.OutputService;
 import services.ScraperService;
+import services.factories.OutputServiceFactory;
 import services.factories.ScraperServiceFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -44,21 +50,23 @@ public class Application {
          */
         Config config = getConfiguration(args);
 
-        ScraperServiceFactory scraperServiceFactory = new ScraperServiceFactory();
-        ScraperService scraperService = scraperServiceFactory.getScraperService("SAINSBURYS");
+        ScraperService scraperService = ScraperServiceFactory.getScraperService(config.getScraper());
+        OutputService outputService = OutputServiceFactory.getOutputService("XML");
 
         try {
-            if(null != scraperService)
-                System.out.println(scraperService.scrape(config));
+            if (null != scraperService && null != outputService) {
+                List<Product> products = scraperService.scrape(config);
+                String output = outputService.output(new Results(products, new Total(products)));
+                LOGGER.info("Products\n {}", output);
+            }
+        } catch (JsonProcessingException e) {
+            LOGGER.error("There has been an error processing your model objects", e);
+        } catch (HttpStatusException e) {
+            LOGGER.error("Invalid HTTP Status code", e);
+        } catch (MalformedURLException e) {
+            LOGGER.error("The url being used is malformed", e);
         } catch (IOException e) {
-            if(e instanceof JsonProcessingException)
-                LOGGER.error("There has been an error processing your JSON objects", e);
-            else if (e instanceof HttpStatusException)
-                LOGGER.error("Invalid HTTP Status code", e);
-            else if (e instanceof MalformedURLException)
-                LOGGER.error("The url being used is malformed", e);
-            else
-                LOGGER.error("There has been an io exception", e);
+            LOGGER.error("There has been an io exception", e);
         }
     }
 

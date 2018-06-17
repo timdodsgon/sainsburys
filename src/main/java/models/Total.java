@@ -3,6 +3,8 @@ package models;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -13,9 +15,10 @@ public class Total {
     private BigDecimal gross;
     private BigDecimal vat;
 
-    public Total(BigDecimal productsTotal, BigDecimal inclusiveVAT) {
-        this.gross = productsTotal;
-        this.vat = inclusiveVAT;
+    public Total(List<Product> products) {
+        BigDecimal totalUnitPrice = products.stream().map(Product::getUnitPrice).filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
+        this.gross = totalUnitPrice.setScale(2, RoundingMode.HALF_UP);
+        this.vat = BigDecimal.valueOf(totalUnitPrice.doubleValue() - (totalUnitPrice.doubleValue() / 1.2)).setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getGross() {
@@ -41,8 +44,8 @@ public class Total {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         Total other = (Total) obj;
-        if (gross != other.gross) return false;
-        if (vat != other.vat) return false;
+        if (!Objects.equals(gross, other.gross)) return false;
+        if (!Objects.equals(vat, other.vat)) return false;
         return true;
     }
 }

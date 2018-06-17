@@ -1,11 +1,7 @@
 package services.scrapers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import config.Config;
-import models.Results;
 import models.Product;
-import models.Total;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Response;
@@ -31,55 +27,29 @@ public class Sainsburys implements ScraperService {
 
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0";
     private static final String RELATIVE_LINK = "../";
-    private static final String INVALID_JSON = "{ \"results\" : \"INVALID\" }";
     private static final String DECIMAL_REGEX = "[^0-9.]";
 
-    private ObjectMapper objectMapper = new ObjectMapper();
-
     /**
-     * Gather information from a http response and return a JSON String
+     * Gather information from a http response and return a list of products
      *
      * @param config
-     * @return JSON String
+     * @return list of products
      * @throws IOException
      */
-    public String scrape(Config config) throws IOException {
+    public List<Product> scrape(Config config) throws IOException {
 
         List<Product> products = new ArrayList<>();
 
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-
         LOGGER.info("Starting scrape");
-
-        double runningTotal = 0;
         for(String link : getSainsburysProductLinks(new URL(config.getUrl()))) {
             Product product = getSainsburysProduct(new URL(config.getBaseURL() + link.replace(RELATIVE_LINK, StringUtils.EMPTY)), config);
             if(null != product) {
-                runningTotal += product.getUnitPrice().doubleValue();
                 products.add(product);
             } else {
                 LOGGER.error("The following link {} returned no product data", link);
             }
         }
-
-        Results results = new Results(products, calculateVATFromRunningTotal(runningTotal));
-
-        String jsonString = objectMapper.writeValueAsString(results);
-        if(isJSONValid(jsonString)){
-            return jsonString;
-        }
-        return INVALID_JSON;
-    }
-
-    /**
-     * Instantiates Total object and calculates the VAT in runningTotal
-     *
-     * @param productsTotal
-     * @return
-     */
-    Total calculateVATFromRunningTotal(final double productsTotal) {
-        return new Total(BigDecimal.valueOf(productsTotal).setScale(2, RoundingMode.HALF_UP),
-                         BigDecimal.valueOf(productsTotal - (productsTotal/1.2)).setScale(2, RoundingMode.HALF_UP));
+        return products;
     }
 
     /**
@@ -150,30 +120,5 @@ public class Sainsburys implements ScraperService {
             return new Product(title, calories, unitPrice, description);
         }
         throw new HttpStatusException("Invalid response", response.statusCode(), url.toString());
-    }
-
-    /**
-     * Test given JSON is valid
-     *
-     * @param json
-     * @return boolean
-     */
-    boolean isJSONValid(String json) {
-        try {
-            final ObjectMapper mapper = new ObjectMapper();
-            mapper.readTree(json);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Method to aid in running the test harness
-     *
-     * @param objectMapper
-     */
-    void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
     }
 }

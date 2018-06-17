@@ -1,0 +1,25 @@
+<Results>
+    <results>
+        <results>
+            <title>Sainsbury's Mixed Berry Twin Pack 200g</title>
+            <unit_price>2.75</unit_price>
+            <description>Mixed Berries</description>
+        </results>
+        <results>
+            <title>Sainsbury's Blueberries 200g</title>
+            <kcal_per_100g>45.0</kcal_per_100g>
+            <unit_price>1.75</unit_price>
+            <description>by Sainsbury's blueberries</description>
+        </results>
+        <results>
+            <title>Sainsbury's Strawberries 400g</title>
+            <kcal_per_100g>33.0</kcal_per_100g>
+            <unit_price>1.75</unit_price>
+            <description>by Sainsbury's strawberries</description>
+        </results>
+    </results>
+    <total>
+        <gross>6.25</gross>
+        <vat>1.04</vat>
+    </total>
+</Results>

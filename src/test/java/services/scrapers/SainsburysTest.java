@@ -8,32 +8,22 @@ import static org.hamcrest.CoreMatchers.nullValue;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.core.Appender;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import config.Config;
 import models.Product;
-import models.Total;
-import org.json.JSONException;
 import org.jsoup.HttpStatusException;
 import org.junit.*;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
-
 import org.mockito.runners.MockitoJUnitRunner;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.slf4j.LoggerFactory;
-import services.BaseScaperServiceTest;
+import services.BaseTest;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -44,7 +34,7 @@ import java.util.List;
 import java.util.Properties;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SainsburysTest  extends BaseScaperServiceTest {
+public class SainsburysTest extends BaseTest {
 
     private static final String URL = "http://127.0.0.1:8089/products/products.html";
     private static final String BASE_URL = "http://127.0.0.1:8089";
@@ -89,25 +79,26 @@ public class SainsburysTest  extends BaseScaperServiceTest {
     }
 
     @Test
-    public void testScrapeReturnsExpectedJSON() throws IOException, JSONException {
+    public void testScrapeReturnsExpectedListOfProducts() throws IOException {
         // given
-        String expected = IOUtils.toString(this.getClass().getResourceAsStream("/expected.json"), "UTF-8");
+        List<Product> expected = givenListOfValidProducts();
         // when
-        String actual = sainsburys.scrape(config);
+        List<Product> actual = sainsburys.scrape(config);
         // then
-        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+        assertThat(expected.size(), is(actual.size()));
+        assertProductsInListsAreEqual(expected, actual);
         assertThatLoggerMessageIs(appender,1,"Starting scrape");
     }
 
+
     @Test
-    public void testScrapeLogsNullProductAndContinues() throws IOException, JSONException {
+    public void testScrapeLogsNullProductAndContinues() throws IOException {
         // given
-        String expected = IOUtils.toString(this.getClass().getResourceAsStream("/expected-null-product.json"), "UTF-8");
-        mockHTMLResponse("/nullproduct.html", "/products/berrys.html",HttpsURLConnection.HTTP_OK);
+        mockHTMLResponse("/nullproduct.html", "/products/berrys.html", HttpsURLConnection.HTTP_OK);
         // when
-        String actual = sainsburys.scrape(config);
+        List<Product> actual = sainsburys.scrape(config);
         // then
-        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT);
+        assertThat(actual.size(), is(2));
         assertThatLoggerMessageIs(appender,1,"Starting scrape");
         assertThatLoggerMessageIs(appender,1,"The following link /products/berrys.html returned no product data");
     }
@@ -150,19 +141,6 @@ public class SainsburysTest  extends BaseScaperServiceTest {
     }
 
     @Test
-    public void testThrowsJsonProcessingException() throws IOException {
-        // given
-        ObjectMapper spyObjectMapper = Mockito.spy(new ObjectMapper());
-        when(spyObjectMapper.writeValueAsString(any(Object.class))).thenThrow(new JsonProcessingException("Error"){});
-        sainsburys.setObjectMapper(spyObjectMapper);
-        // expected
-        exception.expect(JsonProcessingException.class);
-        exception.expectMessage("Error");
-        // when
-        sainsburys.scrape(config);
-    }
-
-    @Test
     public void testGetSainsburysProductLinksReturnsCorrectNumberOfLinks() throws IOException {
         // when
         List<String> links = sainsburys.getSainsburysProductLinks(new URL(config.getUrl()));
@@ -181,29 +159,6 @@ public class SainsburysTest  extends BaseScaperServiceTest {
         assertThat("Mixed Berries", is(product.getDescription()));
     }
 
-    @Test
-    public void testCalculateVATFromRunningTotalGeneratesCorrectVATAmount() {
-        // given
-        double runningTotal = 40;
-        double expectedVAT = 6.67;
-        // when
-        Total total = sainsburys.calculateVATFromRunningTotal(runningTotal);
-        // then
-        assertThat(BigDecimal.valueOf(expectedVAT), is(total.getVat()));
-    }
-
-    @Test
-    public void testisJSONValidPassesWithValidJSON() {
-        boolean isJSONValid = sainsburys.isJSONValid("{}");
-        assertThat(isJSONValid, is(true));
-    }
-
-    @Test
-    public void testisJSONValidFailsWithInValidJSON() {
-        boolean isJSONValid = sainsburys.isJSONValid("");
-        assertThat(isJSONValid, is(false));
-    }
-
     private void mockHTMLResponse(String s, String s2, int httpOk) throws IOException {
         String productsHtml = IOUtils.toString(this.getClass().getResourceAsStream(s), "UTF-8");
         givenWebSiteResponse(productsHtml, s2, httpOk);
@@ -215,5 +170,13 @@ public class SainsburysTest  extends BaseScaperServiceTest {
                         .withStatus(httpStatus)
                         .withHeader("Content-Type", "text/html")
                         .withBody(productsHtml)));
+    }
+
+    private void assertProductsInListsAreEqual(List<Product> expected, List<Product> actual) {
+        int i = 0;
+        for (Product product : expected) {
+            assertThat(product.equals(actual.get(i)), is(true));
+            i++;
+        }
     }
 }

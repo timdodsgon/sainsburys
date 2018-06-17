@@ -1,27 +1,32 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+@JsonPropertyOrder({"results", "total"})
 public class Results {
 
     private UUID uuid = UUID.randomUUID();
 
-    private List<Product> results;
+    @JsonProperty("results")
+    private List<Product> products;
     private Total total;
 
     public Results(List<Product> products, Total total) {
-        this.results = products;
+        this.products = products;
         this.total = total;
 
     }
 
-    public List<Product> getResults() {
-        return results;
+    public List<Product> getProducts() {
+        return products;
     }
+
     public Total getTotal() { return total; }
 
     @Override
@@ -40,8 +45,8 @@ public class Results {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         Results other = (Results) obj;
-        if (results != other.results) return false;
-        if (total != other.total) return false;
+        if (!Objects.equals(products, other.products)) return false;
+        if (!Objects.equals(total, other.total)) return false;
         return true;
     }
 }

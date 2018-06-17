@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.LoggerFactory;
-import services.BaseScaperServiceTest;
+import services.BaseTest;
 import services.ScraperService;
 import services.scrapers.Sainsburys;
 
@@ -20,17 +20,13 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ScraperServiceFactoryTest extends BaseScaperServiceTest {
+public class ScraperServiceFactoryTest extends BaseTest {
 
     @Mock
     private Appender appender;
 
-    ScraperServiceFactory scraperServiceFactory;
-
     @Before
     public void setup(){
-        scraperServiceFactory = new ScraperServiceFactory();
-
         Logger logger = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         logger.addAppender(appender);
 
@@ -41,7 +37,7 @@ public class ScraperServiceFactoryTest extends BaseScaperServiceTest {
     @Test
     public void testScraperServiceFactoryReturnsGivenScraper(){
         // given
-        ScraperService scraperService = scraperServiceFactory.getScraperService("SAINSBURYS");
+        ScraperService scraperService = ScraperServiceFactory.getScraperService("SAINSBURYS");
         // then
         assertThat(scraperService, instanceOf(Sainsburys.class));
         assertThatLoggerMessageIs(appender,1,"Returning Sainsburys scraper");
@@ -50,7 +46,7 @@ public class ScraperServiceFactoryTest extends BaseScaperServiceTest {
     @Test
     public void testScraperServiceFactoryReturnsNullGivenUnknownScraper(){
         // given
-        ScraperService scraperService = scraperServiceFactory.getScraperService("UNKNOWN_SCRAPER");
+        ScraperService scraperService = ScraperServiceFactory.getScraperService("UNKNOWN_SCRAPER");
         // then
         assertThat(scraperService, is(nullValue()));
         assertThatLoggerMessageIs(appender,1,"Sorry no scrapers available for UNKNOWN_SCRAPER");
