@@ -51,7 +51,7 @@ public class Application {
         Config config = getConfiguration(args);
 
         ScraperService scraperService = ScraperServiceFactory.getScraperService(config.getScraper());
-        OutputService outputService = OutputServiceFactory.getOutputService("XML");
+        OutputService outputService = OutputServiceFactory.getOutputService(config.getReturnType());
 
         try {
             if (null != scraperService && null != outputService) {

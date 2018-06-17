@@ -47,7 +47,7 @@ Given the installation steps above have been completed, open a CMD prompt in the
 
 ### With Configuration File
 
-The application can optionally be passed a properties file. The properties file can override from one to six values used in the application.
+The application can optionally be passed a properties file. The properties file can override from one to eight values used in the application.
 
 The properties file follows a standard format of name=value once per line.
 
@@ -59,6 +59,8 @@ The properties file follows a standard format of name=value once per line.
     calories=td.nutritionLevel1, td:eq(0)[class], tr:eq(1) td:eq(1)
     price=p.pricePerUnit
     description=div.productText p, div.itemTypeGroup
+    returntype=JSON
+    scraper=SAINSBURYS
 
 Once you have created a file save it to the target folder in the project, enter following command and the application will run using the overridden values you have entered in the config file
 
